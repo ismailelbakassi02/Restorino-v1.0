@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Restorino{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Create an Account</h2>
+            <p>Join Restorino to discover Agadir's best restaurants or showcase your own restaurant!</p>
+        </div>
+        <form method="POST" action="{{ url_for('main.register') }}" class="auth-form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label(class="form-label") }}
+                {% if form.name.errors %}
+                    {{ form.name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {% if form.email.errors %}
+                    {{ form.email(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {% if form.password.errors %}
+                    {{ form.password(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.password(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.confirm_password.label(class="form-label") }}
+                {% if form.confirm_password.errors %}
+                    {{ form.confirm_password(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.confirm_password(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group user-type-selection">
+                {{ form.user_type.label(class="form-label") }}
+                <div class="user-type-options">
+                    <div class="user-type-option">
+                        <input type="radio" name="user_type" id="tourist" value="tourist" checked>
+                        <label for="tourist">
+                            <i class="fas fa-suitcase"></i>
+                            <span>Tourist</span>
+                            <p>Discover and review restaurants in Agadir</p>
+                        </label>
+                    </div>
+                    <div class="user-type-option">
+                        <input type="radio" name="user_type" id="owner" value="owner">
+                        <label for="owner">
+                            <i class="fas fa-store"></i>
+                            <span>Restaurant Owner</span>
+                            <p>Showcase your restaurant to tourists</p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                {{ form.submit(class="btn btn-primary btn-block", value="Create Account") }}
+            </div>
+        </form>
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('main.login') }}">Login here</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Auth Container */
+.auth-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e74c3c 0%, #d32323 100%);
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    max-width: 500px;
+    width: 100%;
+    margin: 0 1rem;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.auth-header {
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.auth-header h2 {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.auth-header p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.auth-form {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #d32323;
+    box-shadow: 0 0 0 3px rgba(211, 35, 35, 0.1);
+    outline: none;
+}
+
+.form-control.is-invalid {
+    border-color: #d32323;
+}
+
+.invalid-feedback {
+    color: #ff6b35;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* User Type Selection */
+.user-type-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.user-type-option {
+    flex: 1;
+}
+
+.user-type-option input {
+    display: none;
+}
+
+.user-type-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    text-align: center;
+}
+
+.user-type-option label:hover {
+    border-color: #d32323;
+    background: #fff0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(211, 35, 35, 0.2);
+}
+
+.user-type-option input:checked + label {
+    border-color: #d32323;
+    background: #fff0f0;
+    box-shadow: 0 5px 15px rgba(211, 35, 35, 0.2);
+}
+
+.user-type-option label i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #d32323;
+}
+
+.user-type-option label span {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.user-type-option label p {
+    font-size: 0.875rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Auth Footer */
+.auth-footer {
+    padding: 1.5rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-top: 1px solid #e1e5e9;
+}
+
+.auth-footer p {
+    color: #666;
+    margin-bottom: 0;
+}
+
+.auth-footer a {
+    color: #d32323;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 1rem;
+    }
+    
+    .auth-card {
+        margin: 0;
+    }
+    
+    .user-type-options {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Enter Menu Items - {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="create-challenge-hero menu-entry-hero-centered">
+    <h1 class="menu-entry-hero-title"><i class="fas fa-utensils me-2"></i> Manual Menu Entry for {{ restaurant.name }}</h1>
+    <p class="menu-entry-hero-desc">Add new menu items and manage the menu for this restaurant below.</p>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="create-challenge-form-card">
+            <div class="menu-entry-card-header">
+                <h3 class="mb-0"><i class="fas fa-plus me-2"></i> Add Menu Item</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" class="mb-5">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="price" class="form-label">Price (MAD)</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="ingredients" class="form-label">Ingredients</label>
+                        <input type="text" class="form-control" id="ingredients" name="ingredients">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="photo" class="form-label">Photo (optional)</label>
+                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">Dietary Flags</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="is_vegetarian" name="is_vegetarian">
+                            <label class="form-check-label" for="is_vegetarian">Vegetarian</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="is_vegan" name="is_vegan">
+                            <label class="form-check-label" for="is_vegan">Vegan</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="is_gluten_free" name="is_gluten_free">
+                            <label class="form-check-label" for="is_gluten_free">Gluten Free</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mt-4 mb-3 menu-entry-btn-center">
+                        <button type="submit" class="btn btn-primary px-5 py-2">Add Menu Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.create-challenge-hero.menu-entry-hero-centered {
+    background: linear-gradient(135deg, #d32323 0%, #b91c1c 100%);
+    color: white;
+    border-radius: 18px;
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-bottom: 2.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 8px 32px rgba(211,35,35,0.13);
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.menu-entry-hero-title, .menu-entry-hero-desc {
+    text-align: center;
+    width: 100%;
+}
+.menu-entry-hero-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.menu-entry-hero-desc {
+    font-size: 1.1rem;
+    color: #ffeaea;
+    margin-bottom: 0;
+}
+.create-challenge-form-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(211,35,35,0.08);
+    padding: 1.5rem 1rem 1.2rem 1rem;
+    margin-bottom: 2.5rem;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.menu-entry-card-header {
+    background: linear-gradient(135deg, #d32323 0%, #b91c1c 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 1rem 1.2rem;
+    margin: -1.5rem -1rem 1.2rem -1rem;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.08);
+    width: 105%;
+    box-sizing: border-box;
+    text-align: center;
+}
+.menu-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.menu-item-list-card {
+    background: #f8f9fa;
+    border: 1px solid #f3dede;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.04);
+    transition: box-shadow 0.2s;
+}
+.menu-item-list-card:hover {
+    box-shadow: 0 6px 18px rgba(211,35,35,0.10);
+}
+.menu-item-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #fff0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #d32323;
+}
+.menu-item-thumb.no-img {
+    background: #f3dede;
+}
+.form-group.mb-3 {
+    margin-bottom: 0.8rem !important;
+}
+.form-group.mb-4 {
+    margin-bottom: 1.1rem !important;
+}
+.menu-entry-btn-center {
+    width: 100%;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 1.2rem !important;
+    margin-bottom: 1.2rem !important;
+}
+@media (max-width: 991px) {
+    .create-challenge-form-card, .create-challenge-hero.menu-entry-hero-centered {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+        max-width: 98vw;
+    }
+    .create-challenge-form-card .card-header {
+        padding: 1rem 1rem;
+        margin: -1.2rem -0.5rem 1rem -0.5rem;
+    }
+}
+</style>
+{% endblock %} 

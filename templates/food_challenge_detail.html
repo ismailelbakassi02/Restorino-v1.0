@@ -1,0 +1,759 @@
+{% extends "base.html" %}
+
+{% block title %}{{ challenge.name }} - Food Challenge{% endblock %}
+
+{% block styles %}
+<style>
+/* Challenge Detail Page Styles - Compact UX Design */
+.challenge-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=1200&h=400&fit=crop') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.challenge-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(230, 57, 70, 0.3), rgba(0, 0, 0, 0.6));
+    z-index: 1;
+}
+
+.challenge-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.challenge-badge {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    object-fit: cover;
+}
+
+.difficulty-badge {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-weight: 600;
+}
+
+.stats-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #E63946;
+    display: block;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+.progress-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.progress-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(#E63946 0deg, #E63946 0deg, #e9ecef 0deg, #e9ecef 360deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto 0.5rem;
+}
+
+.progress-circle::before {
+    content: '';
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.progress-text {
+    position: relative;
+    z-index: 1;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #E63946;
+}
+
+.participants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.participant-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+    transition: transform 0.2s ease;
+}
+
+.participant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.post-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.post-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.8rem;
+}
+
+.post-content {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.post-text-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px; /* Match image height */
+}
+
+.post-text-content p {
+    margin-bottom: 1rem;
+}
+
+.post-actions {
+    margin-top: auto; /* Pushes actions to the bottom */
+}
+
+.post-content .post-image-container {
+    width: 200px;
+    height: 150px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.post-content .post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-challenge {
+    background: linear-gradient(135deg, #E63946, #d32323);
+    border: none;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-challenge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(230, 57, 70, 0.4);
+    color: white;
+}
+
+.completed-badge {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.completed-badge i {
+    font-size: 0.9rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #E63946;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.section-header i {
+    color: #E63946;
+    margin-right: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.form-control {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.progress {
+    height: 6px !important;
+}
+
+.progress-bar {
+    border-radius: 3px;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+@media (max-width: 768px) {
+    .challenge-hero {
+        padding: 1.5rem 0;
+    }
+    
+    .challenge-badge {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .participants-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-row {
+        gap: 0.5rem;
+    }
+    
+    .stat-card {
+        min-width: 100px;
+        padding: 0.8rem;
+    }
+    
+    .stat-number {
+        font-size: 1.3rem;
+    }
+}
+
+/* Simple heart colors only */
+.like-btn i.text-danger {
+    color: #e74c3c !important;
+}
+
+.like-btn i.text-muted {
+    color: #6c757d !important;
+}
+
+.post-content img {
+    border-radius: 8px;
+    object-fit: cover;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hidden CSRF token for AJAX requests -->
+<input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
+
+<div class="challenge-detail-container">
+    <!-- Hero Section -->
+    <div class="challenge-hero" {% if challenge.image_url %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename='uploads/challenges/' + challenge.image_url) }}')"{% endif %}>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="difficulty-badge {% if challenge.difficulty_level <= 2 %}bg-success{% elif challenge.difficulty_level <= 4 %}bg-warning text-dark{% else %}bg-danger{% endif %} me-2">
+                            Level {{ challenge.difficulty_level }}
+                        </span>
+                        {% if challenge.completion_count > 0 %}
+                        <span class="completed-badge">
+                            <i class="fas fa-trophy"></i>{{ challenge.completion_count }} Completed
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="h2 fw-bold mb-2">{{ challenge.name }}</h1>
+                    <p class="mb-3">{{ challenge.description }}</p>
+                    
+                    {% if not user_progress and current_user.is_authenticated and current_user.user_type == 'tourist' %}
+                    <form method="POST" action="" class="d-inline">
+                        {{ join_form.hidden_tag() }}
+                        <input type="hidden" name="action" value="join">
+                        <button type="submit" class="btn btn-challenge">
+                            <i class="fas fa-play me-1"></i>Start Challenge
+                        </button>
+                    </form>
+                    {% elif not current_user.is_authenticated %}
+                    <a href="{{ url_for('main.login') }}" class="btn btn-challenge">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login to Join
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center">
+                    {% if challenge.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/challenges/' + challenge.image_url) }}" 
+                         class="challenge-badge" alt="{{ challenge.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/80x80?text=Challenge" 
+                         class="challenge-badge" alt="{{ challenge.name }}">
+                    {% endif %}
+                    <h5 class="mt-2 text-white mb-0">{{ challenge.badge_reward }}</h5>
+                    <small class="text-light">Badge Reward</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number">{{ participants|length }}</span>
+                <div class="stat-label">Participants</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ challenge.completion_count }}</span>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ challenge.social_share_count }}</span>
+                <div class="stat-label">Social Shares</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ challenge_posts|length }}</span>
+                <div class="stat-label">Community Posts</div>
+            </div>
+        </div>
+
+        <!-- User Progress Section -->
+        {% if user_progress %}
+        <div class="progress-section">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="mb-2">Your Progress</h4>
+                    {% if user_progress.completed %}
+                    <div class="alert alert-success py-2 px-3 mb-2">
+                        <h6 class="mb-1"><i class="fas fa-trophy"></i>Challenge Completed!</h6>
+                        <p class="mb-0 small">You earned the <strong>{{ challenge.badge_reward }}</strong> badge on {{ user_progress.completed_at.strftime('%B %d, %Y') }}.</p>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-2 small">Keep going! You're making great progress on this challenge.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="progress-circle" style="background: conic-gradient(#E63946 0deg, #E63946 {{ user_progress.progress * 3.6 }}deg, #e9ecef {{ user_progress.progress * 3.6 }}deg, #e9ecef 360deg);">
+                        <div class="progress-text">{{ user_progress.progress }}%</div>
+                    </div>
+                    <small class="text-muted">Progress</small>
+                </div>
+            </div>
+            
+            {% if not user_progress.completed %}
+            <div class="mt-3">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ progress_form.hidden_tag() }}
+                    <input type="hidden" name="action" value="update">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ progress_form.progress_update.label(class="form-label") }}
+                                {{ progress_form.progress_update(class="form-control", min="0", max="100", value=user_progress.progress) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ progress_form.proof_image.label(class="form-label") }}
+                                {{ progress_form.proof_image(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ progress_form.comments.label(class="form-label") }}
+                        {{ progress_form.comments(class="form-control", rows="2", placeholder="Share your experience...") }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Share on Social Media</label>
+                        <div class="d-flex gap-1 mb-2">
+                            <a href="https://www.instagram.com/share?url={{ request.url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text=I'm%20taking%20the%20{{ challenge.name }}%20challenge%20on%20Restorino!" target="_blank" class="btn btn-outline-info btn-sm">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label small">Instagram Post URL (optional)</label>
+                            <input type="text" class="form-control" name="social_post_url" placeholder="Paste your Instagram post URL">
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-2">
+                        {{ progress_form.share_socially(class="form-check-input") }}
+                        {{ progress_form.share_socially.label(class="form-check-label small") }}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ progress_form.submit(class="btn btn-challenge") }}
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Participants Section -->
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white border-0">
+                <div class="section-header">
+                    <i class="fas fa-users"></i>
+                    <h3>Challenge Participants</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if participants %}
+                <div class="participants-grid">
+                    {% for participant in participants %}
+                    <div class="participant-card">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if participant.tourist.user.profile_image %}
+                            <img src="{{ url_for('static', filename=participant.tourist.user.profile_image) }}"
+                                 alt="{{ participant.tourist.user.name }}" class="profile-pic-small">
+                            {% else %}
+                            <div class="profile-pic-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0 small">{{ participant.tourist.user.name }}</h6>
+                                <small class="text-muted">{{ participant.tourist.country }}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: {{ participant.progress }}%"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">{{ participant.progress }}% Complete</span>
+                            {% if participant.completed %}
+                            <span class="badge bg-success">Completed</span>
+                            {% else %}
+                            <span class="badge bg-primary">In Progress</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                    <h6>No participants yet</h6>
+                    <p class="text-muted small">Be the first to join this challenge!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Community Posts Section -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <div class="section-header">
+                    <i class="fas fa-comments"></i>
+                    <h3>Community Posts</h3>
+                </div>
+                {% if challenge_posts|length > 1 %}
+                <div class="post-navigation">
+                    <button class="btn btn-sm btn-outline-secondary me-2" id="prevPost">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="nextPost">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if challenge_posts %}
+                <div class="posts-carousel">
+                    {% for post in challenge_posts %}
+                    <div class="post-card compact-post" data-post-index="{{ loop.index0 }}" style="display: {% if loop.first %}block{% else %}none{% endif %};">
+                        <div class="post-header">
+                            {% if post.participant.tourist.user.profile_image %}
+                            <img src="{{ url_for('static', filename=post.participant.tourist.user.profile_image) }}"
+                                 alt="{{ post.participant.tourist.user.name }}" class="profile-pic-small">
+                            {% else %}
+                            <div class="profile-pic-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 small">{{ post.participant.tourist.user.name }}</h6>
+                                <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y at %H:%M') }}</small>
+                            </div>
+                            <span class="badge bg-success">
+                                <i class="fas fa-trophy"></i>Completed
+                            </span>
+                        </div>
+                        <div class="post-content">
+                            {% if post.image_url %}
+                            <div class="post-image-container">
+                                <img src="{{ url_for('static', filename=post.image_url) }}" class="post-image" alt="Challenge proof">
+                            </div>
+                            {% endif %}
+                            <div class="post-text-content">
+                                <p class="mb-2 small">{{ post.content }}</p>
+                                
+                                {% if post.participant.social_post_url %}
+                                <a href="{{ post.participant.social_post_url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                    <i class="fab fa-instagram me-1"></i>View on Instagram
+                                </a>
+                                {% endif %}
+                                
+                                <!-- Like button -->
+                                {% if current_user.is_authenticated and current_user.user_type == 'tourist' %}
+                                <div class="post-actions mt-2">
+                                    {% set is_liked = post.id in liked_post_ids %}
+                                    <button class="btn btn-sm btn-outline-danger like-btn" data-post-id="{{ post.id }}">
+                                        <i class="fas fa-heart {% if is_liked %}text-danger{% else %}text-muted{% endif %}"></i>
+                                        <span class="likes-count">{{ post.likes_count }}</span>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Post indicators -->
+                    {% if challenge_posts|length > 1 %}
+                    <div class="post-indicators text-center mt-3">
+                        {% for post in challenge_posts %}
+                        <span class="post-indicator {% if loop.first %}active{% endif %}" data-post-index="{{ loop.index0 }}"></span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-comments fa-2x text-muted mb-2"></i>
+                    <h6>No posts yet</h6>
+                    <p class="text-muted small">Complete the challenge and be the first to share your experience!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Share Your Experience Section -->
+        {% if user_progress and user_progress.completed %}
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-white border-0">
+                <div class="section-header">
+                    <i class="fas fa-share-alt"></i>
+                    <h3>Share Your Experience</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('main.add_challenge_post') }}" method="post" enctype="multipart/form-data">
+                    {{ join_form.hidden_tag() }}
+                    <input type="hidden" name="participant_id" value="{{ user_progress.id }}">
+                    <input type="hidden" name="challenge_id" value="{{ challenge.id }}">
+                    
+                    <div class="form-group mb-3">
+                        <label for="postContent" class="form-label">Your Experience</label>
+                        <textarea class="form-control" id="postContent" name="content" rows="3"
+                                  placeholder="Share your experience completing this challenge..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="postImage" class="form-label">Upload Image (optional)</label>
+                        <input type="file" class="form-control" id="postImage" name="image" accept="image/*">
+                        <small class="form-text text-muted">Share a photo of your completed challenge!</small>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="socialPostUrl" class="form-label">Social Media Post URL (optional)</label>
+                        <input type="text" class="form-control" id="socialPostUrl" name="social_post_url"
+                               placeholder="Paste your Instagram/Facebook post URL">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-challenge">
+                            <i class="fas fa-paper-plane me-1"></i>Share Experience
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const posts = document.querySelectorAll('.compact-post');
+    const prevBtn = document.getElementById('prevPost');
+    const nextBtn = document.getElementById('nextPost');
+    const indicators = document.querySelectorAll('.post-indicator');
+    
+    // Carousel functionality - only if there are multiple posts
+    if (posts.length > 1) {
+        let currentIndex = 0;
+        
+        function showPost(index) {
+            posts.forEach(post => post.style.display = 'none');
+            posts[index].style.display = 'block';
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === posts.length - 1;
+        }
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    showPost(currentIndex);
+                }
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < posts.length - 1) {
+                    currentIndex++;
+                    showPost(currentIndex);
+                }
+            });
+        }
+        
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                showPost(currentIndex);
+            });
+        });
+        
+        showPost(0);
+    }
+    
+    // Like functionality - works for any number of posts
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const icon = this.querySelector('i');
+            const countSpan = this.querySelector('.likes-count');
+            
+            // Get CSRF token from hidden input
+            const csrfToken = document.getElementById('csrf-token').value;
+            
+            fetch(`/like-challenge-post/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    countSpan.textContent = data.likes_count;
+                    if (data.liked) {
+                        icon.classList.remove('text-muted');
+                        icon.classList.add('text-danger');
+                    } else {
+                        icon.classList.remove('text-danger');
+                        icon.classList.add('text-muted');
+                    }
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

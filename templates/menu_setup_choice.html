@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Set Up Menu - {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="menu-setup-choice-container">
+    <h1 class="mb-4 text-center">How would you like to set up your menu?</h1>
+    <div class="menu-setup-options">
+        <div class="menu-setup-option" onclick="window.location.href='{{ url_for('main.add_menu_item', id=restaurant.id) }}'" tabindex="0">
+            <i class="fas fa-camera"></i>
+            <span>Upload Menu Photo(s)</span>
+            <p>Take or upload a photo of your real-life menu. This will be displayed on your restaurant's menu page.</p>
+        </div>
+        <div class="menu-setup-option" onclick="window.location.href='{{ url_for('main.manual_menu_entry', id=restaurant.id) }}'" tabindex="0">
+            <i class="fas fa-list-alt"></i>
+            <span>Enter Menu Items</span>
+            <p>Add each menu item with its name, ingredients, price, and an optional photo. These will be shown as a digital menu.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.menu-setup-choice-container {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0 2rem 0;
+}
+.menu-setup-choice-container h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: #333;
+}
+.menu-setup-options {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 700px;
+}
+.menu-setup-option {
+    flex: 1;
+    background: #f8f9fa;
+    border: 2px solid #e1e5e9;
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s;
+    outline: none;
+}
+.menu-setup-option:hover, .menu-setup-option:focus {
+    border-color: #d32323;
+    background: #fff0f0;
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(211, 35, 35, 0.13);
+}
+.menu-setup-option i {
+    font-size: 2.5rem;
+    margin-bottom: 1.2rem;
+    color: #d32323;
+}
+.menu-setup-option span {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.7rem;
+    color: #333;
+}
+.menu-setup-option p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+@media (max-width: 768px) {
+    .menu-setup-options {
+        flex-direction: column;
+        gap: 1.5rem;
+        max-width: 98vw;
+    }
+    .menu-setup-option {
+        padding: 2rem 1rem 1.5rem 1rem;
+    }
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Restorino{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard-compact">
+    <div class="admin-header-compact">
+        <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+        <div class="admin-actions">
+            <!-- Removed bulk delete buttons -->
+        </div>
+    </div>
+    <div class="admin-section-compact">
+        <div class="admin-card-compact">
+            <h2><i class="fas fa-user-clock"></i> Pending Verifications</h2>
+            {% if unverified_owners %}
+            <table class="admin-table-compact">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for owner in unverified_owners %}
+                    <tr>
+                        <td>{{ owner.user.name }}</td>
+                        <td>{{ owner.user.email }}</td>
+                        <td>{{ owner.contact_number }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('main.verify_owner', id=owner.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-success btn-sm verify-btn">Verify</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state-compact">
+                <i class="fas fa-check-circle"></i>
+                <p>No pending verification requests</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="admin-section-compact">
+        <div class="admin-card-compact">
+            <h2><i class="fas fa-store"></i> Restaurants</h2>
+            <div style="margin-bottom: 1rem;">
+                <input type="text" id="restaurant-search" class="form-control" placeholder="Search by restaurant name..." style="max-width: 300px; display: inline-block;">
+            </div>
+            {% if restaurants %}
+            <table class="admin-table-compact" id="restaurants-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Rating</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for restaurant in restaurants %}
+                    <tr>
+                        <td>{{ restaurant.name }}</td>
+                        <td>{{ restaurant.owner.user.name }}</td>
+                        <td>
+                            <div class="rating-small">
+                                {% for i in range(5) %}
+                                    {% if i < restaurant.average_rating|int %}
+                                    <i class="fas fa-star"></i>
+                                    {% elif (i < (restaurant.average_rating + 0.5)|int) and (restaurant.average_rating % 1 >= 0.5) %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span>{{ restaurant.average_rating }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('main.restaurant_detail', id=restaurant.id) }}" class="btn btn-secondary btn-sm" title="View"><i class="fas fa-eye"></i></a>
+                            <form method="POST" action="{{ url_for('main.delete_restaurant', id=restaurant.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this restaurant?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state-compact">
+                <i class="fas fa-utensils"></i>
+                <p>No restaurants available</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-dashboard-compact {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.admin-header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.admin-header-compact h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #d32323;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+.admin-actions {
+    display: flex;
+    gap: 1rem;
+}
+.btn-float {
+    border-radius: 50px;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.12);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.admin-section-compact {
+    margin-bottom: 2rem;
+}
+.admin-card-compact {
+    background: #f8f9fa;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem 1.2rem;
+}
+.admin-card-compact h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.admin-table-compact {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.admin-table-compact th, .admin-table-compact td {
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #e1e5e9;
+    font-size: 1rem;
+}
+.admin-table-compact th {
+    background: #f1f1f1;
+    font-weight: 700;
+    color: #d32323;
+}
+.admin-table-compact tr:last-child td {
+    border-bottom: none;
+}
+.rating-small i {
+    color: #ffc107;
+    font-size: 1rem;
+}
+.rating-small span {
+    margin-left: 0.3rem;
+    font-weight: 500;
+    color: #333;
+}
+.btn-sm {
+    font-size: 0.95rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+}
+.empty-state-compact {
+    text-align: center;
+    color: #aaa;
+    padding: 2rem 0 1rem 0;
+}
+.empty-state-compact i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #e1e5e9;
+}
+.verify-btn:hover {
+    cursor: pointer;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('restaurant-search');
+    const table = document.getElementById('restaurants-table');
+    if (searchInput && table) {
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td');
+                if (nameCell) {
+                    const name = nameCell.textContent.toLowerCase();
+                    row.style.display = name.includes(filter) ? '' : 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

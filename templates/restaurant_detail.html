@@ -1,0 +1,1043 @@
+{% extends "base.html" %}
+
+{% block title %}{{ restaurant.name }} - Restorino{% endblock %}
+
+{% block content %}
+<div class="restaurant-detail">
+    <!-- Restaurant Info Red Box -->
+    <div class="restaurant-info-red-box">
+        <div class="restaurant-info-content">
+            <div class="restaurant-basic-info">
+                <h2 class="restaurant-name">{{ restaurant.name }}</h2>
+                <div class="restaurant-cuisine">{{ restaurant.type }}</div>
+            </div>
+            
+            <div class="restaurant-rating-section">
+                <div class="rating-display">
+                    <div class="rating-stars">
+                        {% for i in range(5) %}
+                            {% if i < restaurant.average_rating|int %}
+                            <i class="fas fa-star"></i>
+                            {% elif (i < (restaurant.average_rating + 0.5)|int) and (restaurant.average_rating % 1 >= 0.5) %}
+                            <i class="fas fa-star-half-alt"></i>
+                            {% else %}
+                            <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="rating-value">{{ "%.1f"|format(restaurant.average_rating) }}</span>
+                    </div>
+                    <div class="review-count">({{ reviews|length }} reviews)</div>
+                </div>
+            </div>
+            
+            <div class="restaurant-actions-section">
+                {% if current_user.is_authenticated %}
+                <div class="restaurant-actions-buttons">
+                    <a href="{{ url_for('main.add_photo', id=restaurant.id) }}" class="add-photo-btn">
+                        <i class="fas fa-camera"></i>
+                        <span>Add Photo</span>
+                    </a>
+                    
+                    {% if current_user.user_type == 'owner' %}
+                        {% set owner = current_user.restaurant_owner %}
+                        {% if owner and restaurant.owner_id == owner.id %}
+                        <a href="{{ url_for('main.menu_setup_choice', id=restaurant.id) }}" class="set-menu-btn">
+                            <i class="fas fa-utensils"></i>
+                            <span>Set Menu</span>
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="restaurant-content">
+        <div class="restaurant-main">
+            <div class="photo-gallery">
+                {% if photos %}
+                <div class="gallery-grid">
+                    {% for photo in photos %}
+                    <div class="gallery-item">
+                        <img src="{{ url_for('static', filename=photo.image_url) }}" alt="{{ photo.caption or restaurant.name }}" onerror="this.src='/static/img/default-restaurant.jpg'" onclick="openLightbox(this.src)">
+                        {% if photo.caption %}
+                        <div class="caption">{{ photo.caption }}</div>
+                        {% endif %}
+                        {% if current_user.is_authenticated and (current_user.id == photo.uploaded_by or (current_user.user_type == 'owner' and current_user.restaurant_owner.id == restaurant.owner_id)) %}
+                        <div class="delete-photo">
+                            <form action="{{ url_for('main.delete_restaurant_photo', photo_id=photo.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this photo?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-photos">
+                    <i class="fas fa-camera"></i>
+                    <p>No photos available yet</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="restaurant-description">
+                <h2><u>About</u></h2>
+                <p>{{ restaurant.description }}</p>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <h2 class="mb-0"><u>Menu</u></h2>
+                        <button type="button" class="menu-arrow-btn-rect ms-3" title="View Full Menu" onclick="animateMenuArrowAndGo('{{ url_for('main.restaurant_menu', id=restaurant.id) }}', this)">
+                            <span class="menu-arrow-btn-text">Check The Menu</span>
+                            <i class="fas fa-arrow-right fa-lg menu-arrow-forward"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reviews-section">
+                <h2><u>Reviews</u></h2>
+                {% if review_form %}
+                <div id="write-review" class="write-review">
+                    <h3>Write a Review</h3>
+                    <form method="POST" action="{{ url_for('main.add_review', id=restaurant.id) }}" enctype="multipart/form-data">
+                        {{ review_form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ review_form.rating.label(class="form-label") }}
+                            {{ review_form.rating(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ review_form.comment.label(class="form-label") }}
+                            {{ review_form.comment(class="form-control", rows=4) }}
+                        </div>
+                        <div class="form-group">
+                            {{ review_form.images.label(class="form-label") }}
+                            {{ review_form.images(class="form-control", id="review-images") }}
+                            <div class="image-preview-container" id="image-preview-container"></div>
+                        </div>
+                        <div class="form-group">
+                            {{ review_form.submit(class="btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+                
+                <script>
+                    // Image preview script
+                    document.getElementById('review-images').addEventListener('change', function(event) {
+                        const previewContainer = document.getElementById('image-preview-container');
+                        previewContainer.innerHTML = '';
+                        
+                        if (this.files) {
+                            Array.from(this.files).forEach(file => {
+                                if (file) {
+                                    const reader = new FileReader();
+                                    
+                                    reader.onload = function(e) {
+                                        const preview = document.createElement('div');
+                                        preview.className = 'image-preview';
+                                        
+                                        const img = document.createElement('img');
+                                        img.src = e.target.result;
+                                        
+                                        preview.appendChild(img);
+                                        previewContainer.appendChild(preview);
+                                    }
+                                    
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        }
+                    });
+                </script>
+                {% endif %}
+                
+                {% if reviews %}
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                    <div class="review-item" style="position: relative;">
+                        <!-- Delete button for admin or review author -->
+                        {% if current_user.is_authenticated and ((current_user.user_type == 'owner' and current_user.restaurant_owner.is_super_user) or (current_user.user_type == 'tourist' and review.tourist.user_id == current_user.id)) %}
+                        <form method="POST" action="
+                            {% if current_user.user_type == 'owner' and current_user.restaurant_owner.is_super_user %}
+                                {{ url_for('main.delete_review', id=review.id) }}
+                            {% elif current_user.user_type == 'tourist' and review.tourist.user_id == current_user.id %}
+                                {{ url_for('main.delete_own_review', id=review.id) }}
+                            {% else %}#{% endif %}"
+                            style="position: absolute; top: 8px; right: 8px; z-index: 2;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger btn-sm review-delete-btn" title="Delete" onclick="return confirm('Are you sure you want to delete this review?')">
+                                <i class="fas fa-trash review-delete-icon"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                {% if review.tourist.user.profile_image %}
+                                <img src="{{ url_for('static', filename=review.tourist.user.profile_image) }}" alt="{{ review.tourist.user.name }}" class="profile-pic-small">
+                                {% else %}
+                                <div class="profile-pic-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {% endif %}
+                                <span class="reviewer-name">{{ review.tourist.user.name }}</span>
+                                <span class="reviewer-country">{{ review.tourist.country }}</span>
+                            </div>
+                            <div class="review-rating">
+                                {% for i in range(5) %}
+                                    {% if i < review.rating %}
+                                    <i class="fas fa-star"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="review-rating-value">{{ review.rating }}.0</span>
+                            </div>
+                        </div>
+                        <div class="review-date">{{ review.date.strftime('%B %d, %Y') }}</div>
+                        <div class="review-content">{{ review.comment }}</div>
+                        
+                        {% if review.images %}
+                        <div class="review-image-gallery">
+                            <div class="review-image-gallery-title">Photos from this review:</div>
+                            <div class="review-images">
+                                {% for image in review.images %}
+                                <div class="review-image">
+                                    <img src="{{ url_for('static', filename=image.image_url) }}" alt="Review image" onerror="this.src='/static/img/default-restaurant.jpg'" onclick="openLightbox(this.src)">
+                                    {% if current_user.is_authenticated and current_user.user_type == 'tourist' %}
+                                        {% set tourist = current_user.tourist %}
+                                        {% if tourist and review.tourist_id == tourist.id %}
+                                        <div class="delete-image">
+                                            <form action="{{ url_for('main.delete_review_image', image_id=image.id) }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this image?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-reviews">
+                    <p>No reviews yet. Be the first to review this restaurant!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="restaurant-sidebar">
+            <div class="sidebar-card info-card">
+                <h3>Restaurant Information</h3>
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ restaurant.location }}</span>
+                </div>
+                {% if restaurant.address %}
+                <div class="info-item">
+                    <i class="fas fa-map"></i>
+                    <span>{{ restaurant.address }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ restaurant.open_time }} - {{ restaurant.close_time }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ restaurant.contact_number }}</span>
+                </div>
+                {% if restaurant.whatsapp_number %}
+                <div class="info-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>{{ restaurant.whatsapp_number }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>{{ restaurant.type }}</span>
+                </div>
+                {% if restaurant.price_range %}
+                <div class="info-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>{{ restaurant.price_range }}</span>
+                </div>
+                {% endif %}
+                {% if restaurant.website or restaurant.instagram or restaurant.facebook %}
+                <div class="social-links">
+                    {% if restaurant.website %}
+                    <a href="{{ restaurant.website }}" target="_blank" class="social-link">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    {% endif %}
+                    {% if restaurant.instagram %}
+                    <a href="https://instagram.com/{{ restaurant.instagram }}" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    {% endif %}
+                    {% if restaurant.facebook %}
+                    <a href="https://facebook.com/{{ restaurant.facebook }}" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Restaurant Map -->
+            <div class="sidebar-card map-card">
+                <h3>Location</h3>
+                <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                {% if lat and lng %}
+                    <div id="osm-map" data-lat="{{ lat }}" data-lng="{{ lng }}" style="width:100%; height:250px; border-radius:8px; margin-bottom:1rem;"></div>
+                {% elif restaurant.google_maps_link %}
+                    <iframe width="100%" height="250" frameborder="0" style="border:0; border-radius:8px; margin-bottom:1rem;" src="{{ restaurant.google_maps_link }}" allowfullscreen></iframe>
+                {% elif restaurant.address or restaurant.location %}
+                    <iframe width="100%" height="250" frameborder="0" style="border:0; border-radius:8px; margin-bottom:1rem;" src="https://www.google.com/maps?q={{ (restaurant.address ~ ' ' if restaurant.address) ~ (restaurant.location ~ ' Agadir' if restaurant.location) | urlencode }}&output=embed" allowfullscreen></iframe>
+                {% else %}
+                    <div class="map-placeholder">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>No map location available</p>
+                    </div>
+                {% endif %}
+                <div class="location-info">
+                    {% if restaurant.address %}
+                        <div class="address-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ restaurant.address }}</span>
+                        </div>
+                    {% endif %}
+                    {% if restaurant.location %}
+                        <div class="district-info">
+                            <i class="fas fa-map"></i>
+                            <span>{{ restaurant.location }}, Agadir</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="map-actions">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ restaurant.name }}+{{ restaurant.location }}+Agadir" target="_blank" class="btn-text">
+                        <i class="fas fa-directions"></i> View on Google Maps
+                    </a>
+                </div>
+            </div>
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var mapDiv = document.getElementById('osm-map');
+                if (mapDiv) {
+                    var lat = Number(mapDiv.getAttribute('data-lat'));
+                    var lng = Number(mapDiv.getAttribute('data-lng'));
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        var map = L.map('osm-map').setView([lat, lng], 16);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '© OpenStreetMap'
+                        }).addTo(map);
+                        L.marker([lat, lng]).addTo(map)
+                            .bindPopup("{{ restaurant.name|escape }}").openPopup();
+                    }
+                }
+            });
+            </script>
+            
+            <div class="sidebar-card owner-card">
+                <h3>Restaurant Owner</h3>
+                <div class="owner-info">
+                    <p>{{ restaurant.owner.user.name }}</p>
+                    <p><small>Member since {{ restaurant.owner.user.created_at.strftime('%B %Y') }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Restaurant Confirmation Modal -->
+{% if current_user.is_authenticated and current_user.user_type == 'restaurant_owner' %}
+    {% set owner = current_user.restaurant_owner %}
+    {% if owner and restaurant.owner_id == owner.id %}
+<div class="modal fade" id="deleteRestaurantModal" tabindex="-1" aria-labelledby="deleteRestaurantModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteRestaurantModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ restaurant.name }}</strong>? This action cannot be undone.</p>
+                <p>All associated menu items, reviews, and photos will also be deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('main.delete_restaurant', id=restaurant.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn-danger">Delete Restaurant</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endif %}
+{% endif %}
+
+{# Lightbox Modal for Images #}
+<div id="image-lightbox" class="image-lightbox" style="display:none;">
+    <div class="lightbox-overlay"></div>
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+        <img id="lightbox-img" src="" alt="Full Image" />
+    </div>
+</div>
+
+<style>
+.review-delete-btn {
+    padding: 1px 6px;
+    font-size: 0.8em;
+    line-height: 1;
+}
+.review-delete-icon {
+    font-size: 0.7em;
+}
+.menu-images-gallery {
+    background: #f9f9fb;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(211,35,35,0.06);
+    padding: 1.5rem 1rem 1rem 1rem;
+}
+.menu-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+}
+.menu-image-cell {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(35,99,211,0.07);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+}
+.menu-image-cell img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.delete-photo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.menu-image-cell:hover .delete-photo {
+    opacity: 1;
+}
+.image-lightbox {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    flex-direction: column;
+}
+.lightbox-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    z-index: 1;
+}
+.lightbox-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+.lightbox-content img {
+    max-width: 80vw;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    background: #fff;
+}
+.lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    font-size: 2.5rem;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 3;
+    padding: 0 18px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.lightbox-close:hover {
+    color: #ff6b35;
+}
+@media (max-width: 600px) {
+    .lightbox-content img {
+        max-width: 98vw;
+        max-height: 60vh;
+    }
+    .lightbox-close {
+        top: -30px;
+        font-size: 2rem;
+    }
+}
+.gallery-item img,
+.review-image img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 250px;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+.map-placeholder i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #adb5bd;
+}
+
+.map-placeholder p {
+    margin: 0;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.location-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.address-info, .district-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.address-info:last-child, .district-info:last-child {
+    margin-bottom: 0;
+}
+
+.address-info i, .district-info i {
+    color: #d32323;
+    margin-right: 0.5rem;
+    width: 16px;
+    text-align: center;
+}
+
+.address-info span, .district-info span {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.map-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.map-actions .btn-text {
+    display: inline-flex;
+    align-items: center;
+    background: #d32323;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(211, 35, 35, 0.2);
+}
+
+.map-actions .btn-text:hover {
+    background: #b91c1c;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(211, 35, 35, 0.3);
+}
+
+.map-actions .btn-text i {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+.street-view-container {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.street-view-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+.street-view-placeholder i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #adb5bd;
+}
+
+.street-view-placeholder p {
+    margin: 0;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.map-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-street-view {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.btn-street-view:hover {
+    background: #218838 !important;
+    color: white !important;
+}
+
+.profile-pic-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 14px;
+    border: 2px solid #dee2e6;
+}
+
+.profile-pic-placeholder-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 48px;
+    border: 3px solid #dee2e6;
+    margin: 0 auto;
+}
+
+/* Restaurant Info Red Box Styles */
+.restaurant-info-red-box {
+    background: linear-gradient(135deg, #d32323, #b91c1c);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 25px rgba(211, 35, 35, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.restaurant-info-red-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+}
+
+.restaurant-info-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.restaurant-basic-info {
+    flex: 1;
+}
+
+.restaurant-name {
+    color: white;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-family: 'Poppins', sans-serif;
+}
+
+.restaurant-cuisine {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    backdrop-filter: blur(10px);
+}
+
+.restaurant-rating-section {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.rating-display {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.rating-stars {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.rating-stars i {
+    color: #ffd700;
+    font-size: 1.2rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.rating-value {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-left: 0.5rem;
+}
+
+.review-count {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.restaurant-actions-section {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.restaurant-actions-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-end;
+}
+
+.add-photo-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.6rem 1.1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.add-photo-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.add-photo-btn i {
+    font-size: 1rem;
+}
+
+.set-menu-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 0.6rem 1.1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.set-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.set-menu-btn i {
+    font-size: 1rem;
+}
+
+/* Review Rating Styles */
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.review-rating i {
+    color: #ffd700;
+    font-size: 1rem;
+}
+
+.review-rating-value {
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-left: 0.3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .restaurant-info-red-box {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .restaurant-info-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    
+    .restaurant-actions-buttons {
+        align-items: center;
+    }
+    
+    .restaurant-name {
+        font-size: 1.8rem;
+    }
+    
+    .restaurant-cuisine {
+        font-size: 1rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .rating-display {
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .rating-stars i {
+        font-size: 1rem;
+    }
+    
+    .rating-value {
+        font-size: 1.3rem;
+    }
+    
+    .add-photo-btn {
+        padding: 0.7rem 1.3rem;
+        font-size: 0.9rem;
+    }
+    
+    .set-menu-btn {
+        padding: 0.7rem 1.3rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .restaurant-info-red-box {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .restaurant-name {
+        font-size: 1.5rem;
+    }
+    
+    .restaurant-cuisine {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.6rem;
+    }
+    
+    .rating-display {
+        padding: 0.6rem 1rem;
+    }
+    
+    .rating-value {
+        font-size: 1.1rem;
+    }
+    
+    .add-photo-btn {
+        padding: 0.6rem 1.1rem;
+        font-size: 0.85rem;
+    }
+}
+
+.image-lightbox img {
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+.image-lightbox img.zoomed {
+    cursor: zoom-out;
+    transform: scale(2);
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+// Lightbox logic for all menu and restaurant images
+function openLightbox(src) {
+    const lightbox = document.getElementById('image-lightbox');
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
+    img.classList.remove('zoomed'); // Reset zoom on open
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+    const lightbox = document.getElementById('image-lightbox');
+    lightbox.style.display = 'none';
+    const img = document.getElementById('lightbox-img');
+    img.src = '';
+    img.classList.remove('zoomed'); // Reset zoom on close
+    document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Click on any menu image
+    document.querySelectorAll('.menu-image-cell img').forEach(function(img) {
+        img.addEventListener('click', function(e) {
+            openLightbox(this.src);
+        });
+    });
+    // Click on any restaurant photo
+    document.querySelectorAll('.gallery-item img').forEach(function(img) {
+        img.addEventListener('click', function(e) {
+            openLightbox(this.src);
+        });
+    });
+    // Click on any review image
+    document.querySelectorAll('.review-image img').forEach(function(img) {
+        img.addEventListener('click', function(e) {
+            openLightbox(this.src);
+        });
+    });
+    // Close button
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    // Click outside image to close
+    document.querySelector('.lightbox-overlay').addEventListener('click', closeLightbox);
+    // Escape key closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
+    // Zoom in/out on click
+    const lightboxImg = document.getElementById('lightbox-img');
+    if (lightboxImg) {
+        lightboxImg.addEventListener('click', function(e) {
+            this.classList.toggle('zoomed');
+        });
+        // Zoom with mouse wheel
+        lightboxImg.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                this.classList.add('zoomed');
+            } else {
+                this.classList.remove('zoomed');
+            }
+        });
+    }
+});
+
+function animateMenuArrowAndGo(url, btn) {
+    const icon = btn.querySelector('.menu-arrow-forward');
+    if (!icon) { window.location.href = url; return; }
+    icon.classList.add('arrow-go-forward');
+    setTimeout(() => { window.location.href = url; }, 350);
+}
+</script>
+{% endblock %}
+</body>

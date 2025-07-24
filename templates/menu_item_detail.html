@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ menu_item.name }} - {{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="menu-item-simple-row d-flex flex-row align-items-center justify-content-center">
+    <!-- Info Left -->
+    <div class="menu-item-simple-info d-flex flex-column justify-content-center align-items-start flex-grow-1">
+      <h1 class="menu-item-simple-title mb-3"><u>{{ menu_item.name }}</u></h1>
+      <div class="menu-item-simple-price mb-3">{{ menu_item.price }} MAD</div>
+      <div class="menu-item-simple-description mb-4">{{ menu_item.description }}</div>
+      <div class="menu-item-simple-badges mb-4">
+        {% if menu_item.is_vegetarian %}
+        <span class="badge badge-veg">Vegetarian</span>
+        {% endif %}
+        {% if menu_item.is_vegan %}
+        <span class="badge badge-vegan">Vegan</span>
+        {% endif %}
+        {% if menu_item.is_gluten_free %}
+        <span class="badge badge-gf">Gluten Free</span>
+        {% endif %}
+        {% if menu_item.spice_level is not none and menu_item.spice_level != '' and menu_item.spice_level|int > 0 %}
+          {% if menu_item.spice_level == 1 %}
+          <span class="badge badge-spice bg-info">Mild</span>
+          {% elif menu_item.spice_level == 2 %}
+          <span class="badge badge-spice bg-primary">Medium</span>
+          {% elif menu_item.spice_level == 3 %}
+          <span class="badge badge-spice bg-warning">Hot</span>
+          {% elif menu_item.spice_level == 4 %}
+          <span class="badge badge-spice bg-danger">Very Hot</span>
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="menu-item-simple-details">
+        <div><strong>Ingredients:</strong> {{ menu_item.ingredients or 'Not specified' }}</div>
+      </div>
+    </div>
+    <!-- Image Right -->
+    <div class="menu-item-simple-image-col d-flex align-items-center justify-content-center ms-lg-5 mt-4 mt-lg-0">
+      {% if menu_item.image_url %}
+      <img src="{{ url_for('static', filename=menu_item.image_url) }}" class="menu-item-simple-image shadow" alt="{{ menu_item.name }}" onerror="this.src='/static/img/default-restaurant.jpg'">
+      {% else %}
+      <div class="menu-item-simple-no-image d-flex flex-column align-items-center justify-content-center">
+        <i class="fas fa-utensils fa-4x text-muted mb-3"></i>
+        <p class="text-muted">No image available</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

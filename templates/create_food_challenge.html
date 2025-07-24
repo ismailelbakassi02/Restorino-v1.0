@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Create Food Challenge{% endblock %}
+
+{% block styles %}
+<style>
+.create-challenge-hero {
+    background: linear-gradient(135deg, #d32323 0%, #b91c1c 100%);
+    color: white;
+    border-radius: 18px;
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 8px 32px rgba(211,35,35,0.13);
+    text-align: center;
+}
+.create-challenge-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.create-challenge-hero p {
+    font-size: 1.1rem;
+    color: #ffeaea;
+    margin-bottom: 0;
+}
+.create-challenge-form-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(211,35,35,0.08);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-bottom: 2.5rem;
+}
+.create-challenge-form-card .card-header {
+    background: linear-gradient(135deg, #d32323 0%, #b91c1c 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 1.2rem 2rem;
+    margin: -2.5rem -2rem 2rem -2rem;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.08);
+}
+.create-challenge-form-card .form-label {
+    font-weight: 600;
+    color: #d32323;
+}
+.create-challenge-form-card .form-control, .create-challenge-form-card .form-select {
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    font-size: 1rem;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.3rem;
+}
+.create-challenge-form-card .btn-primary {
+    background: linear-gradient(135deg, #d32323 0%, #b91c1c 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.6rem 2.2rem;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.13);
+    transition: background 0.2s;
+}
+.create-challenge-form-card .btn-primary:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #d32323 100%);
+}
+.create-challenge-form-card .btn-secondary {
+    border-radius: 8px;
+    font-weight: 600;
+    margin-left: 0.7rem;
+}
+.create-challenge-form-card .form-text {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+.create-challenge-tips {
+    background: #fff8f6;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(211,35,35,0.06);
+    padding: 1.5rem 1rem 1rem 1rem;
+    margin-top: 2rem;
+    border-left: 6px solid #d32323;
+    position: relative;
+}
+.create-challenge-tips::before {
+    content: '\f05a';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #d32323;
+    position: absolute;
+    left: 1.1rem;
+    top: 1.1rem;
+    font-size: 1.3rem;
+    opacity: 0.85;
+}
+.create-challenge-tips h5 {
+    color: #d32323;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+    margin-left: 2.2rem;
+}
+.create-challenge-tips ul {
+    margin-bottom: 0;
+    padding-left: 2.2rem;
+}
+.create-challenge-tips li {
+    color: #b91c1c;
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    position: relative;
+}
+@media (max-width: 768px) {
+    .create-challenge-hero, .create-challenge-form-card {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
+    .create-challenge-form-card .card-header {
+        padding: 1rem 1rem;
+        margin: -1.2rem -0.5rem 1rem -0.5rem;
+    }
+}
+.challenge-image-dropzone {
+    border: 2px dashed #d32323;
+    border-radius: 12px;
+    background: #fff6f6;
+    color: #d32323;
+    text-align: center;
+    padding: 2rem 1rem 1.5rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+.challenge-image-dropzone.dragover {
+    border-color: #b91c1c;
+    background: #ffeaea;
+}
+.challenge-image-dropzone .dz-text {
+    font-size: 1.1rem;
+    color: #b91c1c;
+    margin-bottom: 0.5rem;
+}
+.challenge-image-dropzone i {
+    color: #d32323;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-challenge-hero">
+    <h1><i class="fas fa-trophy me-2"></i> Create a New Food Challenge</h1>
+    <p>Design a culinary adventure for Agadir's foodies! Fill out the form below to add a new challenge to the platform.</p>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="create-challenge-form-card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-trophy me-2"></i> Challenge Details</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control", placeholder="e.g., Tagine Tour, Seafood Safari") }}
+                        <small class="form-text">Create a catchy, memorable name</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=4, placeholder="Describe what tourists need to do to complete this challenge...") }}
+                        <small class="form-text">Be clear about what participants need to do</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.difficulty_level.label(class="form-label") }}
+                            {{ form.difficulty_level(class="form-select") }}
+                        <small class="form-text">How challenging is this for tourists?</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.badge_reward.label(class="form-label") }}
+                            {{ form.badge_reward(class="form-control", placeholder="e.g., Tagine Master, Seafood Explorer") }}
+                        <small class="form-text">The title participants earn upon completion</small>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">Main Challenge Image</label>
+                        <div id="challenge-image-dropzone" class="challenge-image-dropzone">
+                            <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                            <div class="dz-text">Drag & drop an image here, or click to select</div>
+                            <img id="challenge-image-preview" src="#" alt="Preview" style="display:none; max-width:100%; max-height:180px; margin-top:10px; border-radius:10px;" />
+                            {{ form.challenge_image(class="d-none", id="challenge-image-input") }}
+                        </div>
+                        </div>
+                    <div class="form-group mt-4">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('main.food_challenges') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            <div class="create-challenge-tips">
+                    <h5>Challenge Creation Tips</h5>
+                    <ul>
+                        <li>Make challenges achievable but interesting</li>
+                        <li>Focus on authentic Moroccan culinary experiences</li>
+                        <li>Consider different dietary preferences</li>
+                        <li>Create challenges that showcase different areas of Agadir</li>
+                        <li>Design challenges that are shareable on social media</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const dropzone = document.getElementById('challenge-image-dropzone');
+const fileInput = document.getElementById('challenge-image-input');
+const preview = document.getElementById('challenge-image-preview');
+
+function showPreview(file) {
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+dropzone.addEventListener('dragleave', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+});
+dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        showPreview(e.dataTransfer.files[0]);
+    }
+});
+fileInput.addEventListener('change', e => {
+    if (fileInput.files.length) {
+        showPreview(fileInput.files[0]);
+    }
+});
+</script>
+{% endblock %}

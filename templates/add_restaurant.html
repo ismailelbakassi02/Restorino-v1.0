@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Add Restaurant - Restorino{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>Add Your Restaurant</h1>
+        <p>Showcase your restaurant to tourists visiting Agadir</p>
+    </div>
+    <div class="form-card">
+        <form method="POST" action="{{ url_for('main.add_restaurant') }}">
+            {{ form.hidden_tag() }}
+            
+            <!-- 1. Basic Info -->
+            <div class="form-section">
+                <h2>Basic Information</h2>
+                <div class="form-row">
+                    <div class="form-group half">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (' is-invalid' if form.name.errors else '')) }}
+                        {% for error in form.name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group half">
+                        {{ form.type.label(class="form-label") }}
+                        {{ form.type(class="form-control" + (' is-invalid' if form.type.errors else '')) }}
+                        {% for error in form.type.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        {{ form.location.label(class="form-label") }}
+                        {{ form.location(class="form-control" + (' is-invalid' if form.location.errors else '')) }}
+                        <small class="form-text text-muted">Ex : Near The Stadium</small>
+                        {% for error in form.location.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group half">
+                        {{ form.location_id.label(class="form-label") }}
+                        {{ form.location_id(class="form-control" + (' is-invalid' if form.location_id.errors else '')) }}
+                        <small class="form-text text-muted">Select a district in Agadir</small>
+                        {% for error in form.location_id.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        {{ form.address.label(class="form-label") }}
+                        {{ form.address(class="form-control" + (' is-invalid' if form.address.errors else '')) }}
+                        <small class="form-text text-muted">Full street address</small>
+                        {% for error in form.address.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Map Location -->
+            <div class="form-section">
+                <h2>Map Location</h2>
+                <p class="text-muted mb-3">Paste a Google Maps link to your restaurant location</p>
+                <div class="form-row" style="align-items: flex-end;">
+                    <div class="form-group" style="flex: 1;">
+                        {{ form.google_maps_link.label(class="form-label") }}
+                        {{ form.google_maps_link(class="form-control" + (' is-invalid' if form.google_maps_link.errors else '')) }}
+                        {% for error in form.google_maps_link.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                        <small class="form-text text-muted">Paste a Google Maps link (e.g. https://maps.google.com/...)</small>
+                    </div>
+                    <div class="form-group" style="margin-left: 1rem;">
+                        <button type="button" class="btn btn-secondary" id="preview-map-btn">Preview</button>
+                    </div>
+                </div>
+                <div id="map-preview-area" class="mb-3" style="display:none; margin-top:1rem;"></div>
+            </div>
+            
+            <!-- 3. Price -->
+            <div class="form-section">
+                <h2>Price Range</h2>
+                <div class="form-group">
+                    {{ form.price_range.label(class="form-label") }}
+                    {{ form.price_range(class="form-control" + (' is-invalid' if form.price_range.errors else '')) }}
+                    {% for error in form.price_range.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+            
+            <!-- 4. Online Presence -->
+            <div class="form-section">
+                <h2>Online Presence</h2>
+                <div class="form-row">
+                    <div class="form-group half">
+                        {{ form.instagram.label(class="form-label") }}
+                        {{ form.instagram(class="form-control" + (' is-invalid' if form.instagram.errors else '')) }}
+                        <small class="form-text text-muted">Instagram username (no @)</small>
+                        {% for error in form.instagram.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group half">
+                        {{ form.facebook.label(class="form-label") }}
+                        {{ form.facebook(class="form-control" + (' is-invalid' if form.facebook.errors else '')) }}
+                        <small class="form-text text-muted">Facebook page URL or username</small>
+                        {% for error in form.facebook.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5. Description -->
+            <div class="form-section">
+                <h2>Description</h2>
+                <div class="form-group">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(class="form-control" + (' is-invalid' if form.description.errors else ''), rows=6, placeholder="Tell tourists about your restaurant, cuisine, specialties, and what makes it unique...") }}
+                    {% for error in form.description.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+            
+            <!-- 6. Submit/Cancel -->
+            <div class="form-actions">
+                <a href="{{ url_for('main.dashboard') }}" class="btn-secondary">Cancel</a>
+                {{ form.submit(class="btn-primary") }}
+            </div>
+        </form>
+    </div>
+    <div class="form-info">
+        <div class="info-card">
+            <h3>What Happens Next?</h3>
+            <ol>
+                <li>Your restaurant will be added to Restorino immediately</li>
+                <li>After adding your restaurant, you can add menu items and photos</li>
+                <li>Tourists can discover your restaurant and leave reviews</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+// OSM/Leaflet map preview from Google Maps link
+document.addEventListener('DOMContentLoaded', function() {
+    const previewBtn = document.getElementById('preview-map-btn');
+    const linkInput = document.getElementById('google_maps_link');
+    const previewArea = document.getElementById('map-preview-area');
+    let leafletMap = null;
+    function extractCoords(url) {
+        // 1. Try to extract 3d<lat>!4d<lng> (actual marker)
+        const dMatch = url.match(/3d([\d.\-]+)!4d([\d.\-]+)/);
+        if (dMatch) {
+            return { lat: parseFloat(dMatch[1]), lng: parseFloat(dMatch[2]) };
+        }
+        // 2. Try to extract @lat,lng from Google Maps link (map center)
+        const coordMatch = url.match(/@([\d.\-]+),([\d.\-]+)/);
+        if (coordMatch) {
+            return { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]) };
+        }
+        // 3. Try to extract q=lat,lng
+        const qMatch = url.match(/[?&]q=([\d.\-]+),([\d.\-]+)/);
+        if (qMatch) {
+            return { lat: parseFloat(qMatch[1]), lng: parseFloat(qMatch[2]) };
+        }
+        return null;
+    }
+    if (previewBtn && linkInput && previewArea) {
+        previewBtn.addEventListener('click', function() {
+            const url = linkInput.value.trim();
+            if (url && url.includes('google.com/maps')) {
+                const coords = extractCoords(url);
+                if (coords) {
+                    previewArea.innerHTML = '<div id="osm-map" style="height:320px; border-radius:8px;"></div>';
+                    previewArea.style.display = 'block';
+                    setTimeout(function() {
+                        if (leafletMap) {
+                            leafletMap.remove();
+                        }
+                        leafletMap = L.map('osm-map').setView([coords.lat, coords.lng], 16);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '© OpenStreetMap'
+                        }).addTo(leafletMap);
+                        L.marker([coords.lat, coords.lng]).addTo(leafletMap);
+                    }, 10);
+                } else {
+                    previewArea.innerHTML = '<div class="alert alert-danger">Could not extract coordinates from this link. Please use a Google Maps link with coordinates (e.g. after the @ in the URL).</div>';
+                    previewArea.style.display = 'block';
+                }
+            } else {
+                previewArea.innerHTML = '<div class="alert alert-danger">Please enter a valid Google Maps link.</div>';
+                previewArea.style.display = 'block';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+body {
+    background: linear-gradient(120deg, #f8fafc 0%, #f3f4f8 100%);
+}
+.form-container {
+    max-width: 700px;
+    margin: 2.5rem auto 2rem auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(35, 99, 211, 0.07), 0 1.5px 0 #fff3;
+    padding: 2.5rem 2rem 2rem 2rem;
+}
+.form-header {
+    text-align: center;
+    margin-bottom: 2.2rem;
+}
+.form-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #d32323;
+    margin-bottom: 0.5rem;
+}
+.form-header p {
+    color: #555;
+    font-size: 1.1rem;
+}
+.form-card {
+    background: #f9f9fb;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(211,35,35,0.06);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-bottom: 2rem;
+}
+.form-section {
+    margin-bottom: 2.2rem;
+}
+.form-section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #d32323;
+    margin-bottom: 1.1rem;
+}
+.form-row {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+.form-group {
+    margin-bottom: 1.2rem;
+    flex: 1;
+    min-width: 180px;
+}
+.form-group.half {
+    flex: 1 1 45%;
+}
+.form-group.third {
+    flex: 1 1 30%;
+}
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+    display: block;
+}
+.form-control {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+.form-control:focus {
+    border-color: #d32323;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(211,35,35,0.08);
+}
+.invalid-feedback {
+    color: #d32323;
+    font-size: 0.92em;
+    margin-top: 0.2em;
+}
+.form-text {
+    color: #888;
+    font-size: 0.92em;
+}
+.btn-primary, .btn-secondary {
+    padding: 0.7rem 2rem;
+    border-radius: 22px;
+    font-weight: 700;
+    font-size: 1.08rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    margin-right: 0.7rem;
+}
+.btn-primary {
+    background: linear-gradient(90deg, #d32323 0%, #e74c3c 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.10);
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #b91c1c 0%, #d32323 100%);
+    color: #fff;
+}
+.btn-secondary {
+    background: #f3f4f8;
+    color: #d32323;
+    border: 1px solid #d32323;
+}
+.btn-secondary:hover {
+    background: #d32323;
+    color: #fff;
+}
+.form-actions {
+    text-align: right;
+    margin-top: 1.5rem;
+}
+#map-preview-area {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(35,99,211,0.07);
+}
+.form-info {
+    margin-top: 2.5rem;
+    text-align: center;
+}
+.info-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(35,99,211,0.06);
+    padding: 1.5rem 1rem;
+    display: inline-block;
+    max-width: 90%;
+}
+.info-card h3 {
+    color: #d32323;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+}
+.info-card ol {
+    text-align: left;
+    color: #444;
+    font-size: 1rem;
+    margin: 0 auto;
+    max-width: 400px;
+}
+@media (max-width: 900px) {
+    .form-container {
+        padding: 1rem;
+    }
+    .form-card {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .form-actions {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

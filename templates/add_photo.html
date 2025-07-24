@@ -1,0 +1,610 @@
+{% extends "base.html" %}
+
+{% block title %}Add Photo - {{ restaurant.name }} - Restorino{% endblock %}
+
+{% block content %}
+<div class="photo-upload-container">
+    <div class="photo-upload-header">
+        <div class="restaurant-info">
+            <h1><u>Share Your Experience</u></h1>
+            <p>Add a beautiful photo to showcase "{{ restaurant.name }}"</p>
+        </div>
+    </div>
+    
+    <div class="photo-upload-card">
+        <form method="POST" action="{{ url_for('main.add_photo', id=restaurant.id) }}" enctype="multipart/form-data" id="photoForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Artistic Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content" id="uploadContent">
+                    <div class="upload-icon-large">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop your photo here</h3>
+                    <p>or click to browse</p>
+                    <div class="upload-button">
+                        <span>Choose Photo</span>
+                    </div>
+                    <div class="supported-formats">
+                        <span>JPG, JPEG, PNG, GIF • Max 16MB</span>
+                    </div>
+                </div>
+                
+                <!-- Preview Area -->
+                <div class="preview-area" id="previewArea" style="display: none;">
+                    <div class="preview-container">
+                        <img id="imagePreview" src="" alt="Preview">
+                        <div class="preview-overlay">
+                            <button type="button" class="change-photo-btn" id="changePhotoBtn">
+                                <i class="fas fa-edit"></i>
+                                <span>Change Photo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden file input -->
+                {{ form.photo(class="hidden-file-input", id="fileInput") }}
+            </div>
+            
+            <!-- Caption Section -->
+            <div class="caption-section">
+                <div class="caption-header">
+                    <i class="fas fa-quote-left"></i>
+                    <h3>Tell the story</h3>
+                </div>
+                <div class="form-group">
+                    {% if form.caption.errors %}
+                        {{ form.caption(class="form-control caption-input is-invalid", placeholder="What makes this photo special? Share the story behind this moment...", rows="3") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.caption.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.caption(class="form-control caption-input", placeholder="What makes this photo special? Share the story behind this moment...", rows="3") }}
+                    {% endif %}
+                    <div class="caption-tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Great captions help tourists discover what makes your restaurant unique</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="upload-actions">
+                <a href="{{ url_for('main.restaurant_detail', id=restaurant.id) }}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Restaurant</span>
+                </a>
+                {{ form.submit(class="btn-upload", value="Share Photo") }}
+            </div>
+        </form>
+    </div>
+    
+    <!-- Tips Section -->
+    <div class="upload-tips">
+        <div class="tips-header">
+            <i class="fas fa-star"></i>
+            <h3>Photo Tips for Success</h3>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <h4>Great Lighting</h4>
+                <p>Natural light makes food and ambiance look their best</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h4>Showcase Food</h4>
+                <p>Highlight your signature dishes and presentation</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>Capture Atmosphere</h4>
+                <p>Show the vibe and experience your restaurant offers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== CSS Variables for Easy Customization ===== */
+:root {
+    /* Yelp Red Theme Colors */
+    --primary-red: #d32323;
+    --primary-red-dark: #b91c1c;
+    --primary-red-light: #e74c3c;
+    --secondary-red: #c0392b;
+    --accent-red: #e74c3c;
+    
+    /* Background Gradients */
+    --bg-gradient-primary: linear-gradient(135deg, #d32323 0%, #e74c3c 100%);
+    --bg-gradient-secondary: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    --bg-gradient-light: linear-gradient(145deg, #fff8f5, #ffffff);
+    --bg-gradient-hover: linear-gradient(145deg, #fff0eb, #ffffff);
+    
+    /* Text Colors */
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-light: #999;
+    --text-white: #fff;
+    
+    /* Border Colors */
+    --border-light: #e1e5e9;
+    --border-red: #d32323;
+    --border-red-light: #e74c3c;
+    
+    /* Shadow Colors */
+    --shadow-red: rgba(211, 35, 35, 0.2);
+    --shadow-red-dark: rgba(211, 35, 35, 0.4);
+    --shadow-card: rgba(0, 0, 0, 0.1);
+    --shadow-hover: rgba(0, 0, 0, 0.15);
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 15px;
+    --radius-xl: 20px;
+    --radius-full: 25px;
+    
+    /* Transitions */
+    --transition-fast: all 0.2s ease;
+    --transition-normal: all 0.3s ease;
+    --transition-slow: all 0.5s ease;
+}
+
+/* ===== Main Container Styles ===== */
+.photo-upload-container {
+    min-height: 100vh;
+    background: var(--bg-gradient-primary);
+    padding: var(--spacing-lg) 0;
+}
+
+.photo-upload-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-white);
+}
+
+.photo-upload-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.photo-upload-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-sm);
+}
+
+.upload-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+/* ===== Upload Card Styles ===== */
+.photo-upload-card {
+    max-width: 800px;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--text-white);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 40px var(--shadow-card);
+    overflow: hidden;
+}
+
+/* ===== Upload Area Styles ===== */
+.upload-area {
+    position: relative;
+    min-height: 300px;
+    border: 3px dashed var(--border-light);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg);
+    transition: var(--transition-normal);
+    cursor: pointer;
+    background: var(--bg-gradient-light);
+}
+
+.upload-area:hover {
+    border-color: var(--border-red);
+    background: var(--bg-gradient-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px var(--shadow-red);
+}
+
+.upload-area.dragover {
+    border-color: var(--border-red);
+    background: var(--bg-gradient-hover);
+    transform: scale(1.02);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    text-align: center;
+}
+
+.upload-icon-large {
+    font-size: 4rem;
+    color: var(--primary-red);
+    margin-bottom: var(--spacing-sm);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.upload-content h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+}
+
+.upload-content p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.upload-button {
+    background: var(--bg-gradient-primary);
+    color: var(--text-white);
+    padding: 12px 30px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    transition: var(--transition-normal);
+    box-shadow: 0 4px 15px var(--shadow-red);
+}
+
+.upload-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-red-dark);
+}
+
+.supported-formats {
+    margin-top: var(--spacing-sm);
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.hidden-file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* ===== Preview Area Styles ===== */
+.preview-area {
+    padding: var(--spacing-lg);
+}
+
+.preview-container {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-card);
+}
+
+#imagePreview {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition-normal);
+}
+
+.preview-container:hover .preview-overlay {
+    opacity: 1;
+}
+
+.change-photo-btn {
+    background: rgba(255,255,255,0.9);
+    color: var(--text-primary);
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.change-photo-btn:hover {
+    background: var(--text-white);
+    transform: scale(1.05);
+}
+
+/* ===== Caption Section Styles ===== */
+.caption-section {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+}
+
+.caption-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.caption-header i {
+    color: var(--primary-red);
+    font-size: 1.2rem;
+}
+
+.caption-header h3 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.caption-input {
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    font-size: 1rem;
+    transition: var(--transition-normal);
+    resize: vertical;
+    min-height: 100px;
+}
+
+.caption-input:focus {
+    border-color: var(--border-red);
+    box-shadow: 0 0 0 3px var(--shadow-red);
+    outline: none;
+}
+
+.caption-tip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-xs);
+    color: var(--primary-red);
+    font-size: 0.9rem;
+}
+
+/* ===== Action Buttons Styles ===== */
+.upload-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-light);
+}
+
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: var(--transition-normal);
+}
+
+.btn-cancel:hover {
+    color: var(--text-primary);
+    transform: translateX(-5px);
+}
+
+.btn-upload {
+    background: var(--bg-gradient-primary);
+    color: var(--text-white);
+    border: none;
+    padding: 15px 40px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    box-shadow: 0 4px 15px var(--shadow-red);
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-red-dark);
+}
+
+/* ===== Tips Section Styles ===== */
+.upload-tips {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--text-white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: 0 20px 40px var(--shadow-card);
+}
+
+.tips-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    justify-content: center;
+}
+
+.tips-header i {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
+.tips-header h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.tip-card {
+    text-align: center;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    background: var(--bg-gradient-light);
+    transition: var(--transition-normal);
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px var(--shadow-card);
+}
+
+.tip-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--bg-gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-sm);
+    color: var(--text-white);
+    font-size: 1.5rem;
+}
+
+.tip-card h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.tip-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    .photo-upload-header h1 {
+        font-size: 2rem;
+    }
+    
+    .upload-area {
+        margin: var(--spacing-sm);
+    }
+    
+    .upload-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const uploadContent = document.getElementById('uploadContent');
+    const previewArea = document.getElementById('previewArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileInput = document.getElementById('fileInput');
+    const changePhotoBtn = document.getElementById('changePhotoBtn');
+
+    // Handle file selection
+    function handleFileSelect(file) {
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                uploadContent.style.display = 'none';
+                previewArea.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Click to upload
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // File input change
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        handleFileSelect(file);
+    });
+
+    // Change photo button
+    changePhotoBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        fileInput.click();
+    });
+
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        handleFileSelect(file);
+        fileInput.files = e.dataTransfer.files;
+    });
+
+    // Form validation
+    const form = document.getElementById('photoForm');
+    form.addEventListener('submit', function(e) {
+        if (!fileInput.files[0]) {
+            e.preventDefault();
+            alert('Please select a photo to upload.');
+            return;
+        }
+    });
+});
+</script>
+{% endblock %}

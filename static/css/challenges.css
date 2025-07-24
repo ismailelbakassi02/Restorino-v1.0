@@ -1,0 +1,1019 @@
+/* static/css/challenges.css */
+
+/* General Container and Header */
+.challenges-container {
+    font-family: 'Poppins', sans-serif;
+    padding: 2rem;
+    background-color: #f9f9f9;
+}
+
+.challenges-header {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=1200&h=400&fit=crop') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenges-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(230, 57, 70, 0.3), rgba(0, 0, 0, 0.5));
+    z-index: 1;
+}
+
+.challenges-header h1,
+.challenges-header p,
+.challenges-header .btn {
+    position: relative;
+    z-index: 2;
+}
+
+.challenges-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.challenges-header p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.challenges-header .btn {
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    background-color: #E63946; /* Yelp Red */
+    border-color: #E63946;
+}
+
+.challenges-header .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+}
+
+/* Section Cards */
+.challenge-section-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.challenge-section-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.challenge-section-card .card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.challenge-section-card .card-body {
+    padding: 1.5rem;
+}
+
+/* =================================== */
+/*   HORIZONTAL ROW LAYOUT FOR CARDS   */
+/* =================================== */
+
+/* Override Bootstrap grid for challenges */
+.challenge-section-card .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6rem;
+    margin: 0;
+    justify-content: flex-start;
+}
+
+.challenge-section-card .col-sm-6,
+.challenge-section-card .col-md-4,
+.challenge-section-card .col-lg-3 {
+    flex: 0 0 auto;
+    max-width: none;
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.challenge-card {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+    width: calc(25% - 1.125rem); /* 4 cards per row with gap consideration */
+    min-width: 280px; /* Minimum width */
+    height: 320px; /* Taller cards for better proportions */
+    flex-shrink: 0;
+}
+
+.challenge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.challenge-card a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.challenge-image {
+    width: 100%;
+    height: 160px; /* Larger image area */
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.challenge-card:hover .challenge-image img {
+    transform: scale(1.08);
+}
+
+.challenge-card .card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.challenge-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.challenge-card .card-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.challenge-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: auto;
+}
+
+.challenge-meta .badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+}
+
+/* Empty State Styling */
+.empty-state {
+    color: #888;
+}
+
+.empty-state i {
+    color: #ccc;
+}
+.empty-state h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+.leaderboard-table thead th {
+    font-weight: 600;
+    background-color: #f9f9f9;
+}
+.leaderboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.leaderboard-table .rank {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #E63946;
+}
+
+.leaderboard-table .user-info {
+    display: flex;
+    align-items: center;
+}
+.leaderboard-table .user-info img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+/* Social Wall Post */
+.social-post-card {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.post-header img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+.post-content {
+    flex-grow: 1;
+}
+.post-text-content {
+    flex: 1; 
+}
+.post-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* Responsive adjustments for horizontal layout */
+@media (max-width: 1200px) {
+    .challenge-card {
+        width: calc(33.333% - 1rem); /* 3 cards per row */
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 992px) {
+    .challenge-card {
+        width: calc(50% - 0.75rem); /* 2 cards per row */
+        min-width: 220px;
+        height: 300px;
+    }
+    .challenge-section-card .row {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .challenge-card {
+        width: 100%; /* 1 card per row on mobile */
+        min-width: auto;
+        height: 280px;
+    }
+    .challenge-section-card .row {
+        gap: 1rem;
+        justify-content: center;
+    }
+    .challenges-header {
+        padding: 2.5rem 1rem;
+    }
+    .challenges-header h1 {
+        font-size: 2rem;
+    }
+    .challenges-container {
+        padding: 1rem;
+    }
+    .challenge-section-card .card-body {
+        padding: 1rem;
+    }
+}
+
+/* =================================== */
+/*   COMMUNITY POSTS CAROUSEL - NEW   */
+/* =================================== */
+
+.community-carousel {
+    position: relative;
+    padding: 2rem 4rem;
+    margin: 0 -3rem;
+    overflow: visible;
+}
+
+.posts-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.post-item {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.post-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 0.25rem 0;
+}
+
+.post-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.completion-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.completion-badge i {
+    font-size: 0.9rem;
+}
+
+.post-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.post-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #495057;
+    margin: 0;
+}
+
+.post-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-image img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-image:hover img {
+    transform: scale(1.02);
+}
+
+.social-link {
+    margin-top: 0.5rem;
+}
+
+.instagram-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737);
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(131, 58, 180, 0.3);
+}
+
+.instagram-btn:hover {
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(131, 58, 180, 0.4);
+}
+
+/* =================================== */
+/*   NEW NAVIGATION ARROWS - EDGE     */
+/* =================================== */
+
+.carousel-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #ff4757);
+    color: white;
+    cursor: pointer;
+    pointer-events: all;
+    z-index: 15;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(230, 57, 70, 0.4);
+    overflow: hidden;
+}
+
+.nav-arrow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #ff4757, #E63946);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-arrow:hover::before {
+    opacity: 1;
+}
+
+.nav-arrow:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 12px 40px rgba(230, 57, 70, 0.6);
+}
+
+.nav-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.nav-arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: translateY(-50%) scale(1);
+    background: linear-gradient(135deg, #6c757d, #495057);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+.nav-arrow:disabled:hover {
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+.nav-arrow:disabled::before {
+    display: none;
+}
+
+.arrow-icon {
+    position: relative;
+    z-index: 2;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.nav-left {
+    left: -40px;
+}
+
+.nav-right {
+    right: -40px;
+}
+
+/* =================================== */
+/*   CAROUSEL DOTS - NEW STYLE        */
+/* =================================== */
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #dee2e6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #E63946, #ff4757);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.3s ease;
+}
+
+.dot.active::before {
+    transform: scale(1);
+}
+
+.dot:hover {
+    transform: scale(1.2);
+}
+
+.dot.active {
+    transform: scale(1.1);
+}
+
+/* =================================== */
+/*   EMPTY STATE - NEW STYLE          */
+/* =================================== */
+
+.empty-posts {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+}
+
+.empty-posts i {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-posts h6 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.empty-posts p {
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Community Posts Carousel */
+.posts-carousel {
+    position: relative;
+}
+
+.compact-post {
+    transition: opacity 0.3s ease;
+}
+
+.post-card.compact-post {
+    padding: 0.75rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 0;
+    background: #fff;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.post-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-content p {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+.post-content img {
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.post-navigation {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.post-navigation .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.post-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.post-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.post-indicator.active {
+    background-color: var(--primary-color);
+}
+
+.post-indicator:hover {
+    background-color: var(--primary-color);
+    opacity: 0.7;
+}
+
+/* =================================== */
+/*   SOCIAL WALL LIKE BUTTON          */
+/* =================================== */
+
+.like-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.like-btn:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    transform: scale(1.05);
+}
+
+.like-btn:active {
+    transform: scale(0.95);
+}
+
+.like-btn i {
+    transition: all 0.2s ease;
+}
+
+.like-btn.liked i {
+    color: #dc3545 !important;
+    animation: heartBeat 0.3s ease;
+}
+
+.like-btn.liked:hover {
+    background-color: rgba(220, 53, 69, 0.15);
+}
+
+.likes-count {
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Post footer styling */
+.post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 0.75rem;
+}
+
+/* =================================== */
+/*   SOCIAL WALL PAGINATION - NEW     */
+/* =================================== */
+
+.social-wall-container {
+    position: relative;
+}
+
+.social-wall-posts {
+    margin-bottom: 2rem;
+}
+
+.post-image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-image:hover {
+    transform: scale(1.05);
+}
+
+.social-wall-pagination {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.social-wall-pagination .pagination-info {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.social-wall-pagination .pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.social-wall-pagination .pagination-arrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.social-wall-pagination .pagination-arrow:hover {
+    background-color: #E63946;
+    color: #fff;
+    border-color: #E63946;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+}
+
+.social-wall-pagination .pagination-arrow.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.social-wall-pagination .pagination-arrow.disabled:hover {
+    background-color: #fff;
+    color: #495057;
+    border-color: #dee2e6;
+    transform: none;
+    box-shadow: none;
+}
+
+.social-wall-pagination .pagination-arrow i {
+    font-size: 0.875rem;
+}
+
+.social-wall-pagination .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.social-wall-pagination .page-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.social-wall-pagination .page-number:hover {
+    background-color: #E63946;
+    color: #fff;
+    border-color: #E63946;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+}
+
+.social-wall-pagination .page-number.current {
+    background-color: #E63946;
+    color: #fff;
+    border-color: #E63946;
+    cursor: default;
+}
+
+.social-wall-pagination .page-number.current:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.social-wall-pagination .page-ellipsis {
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0 0.5rem;
+}
+
+/* Responsive social wall pagination */
+@media (max-width: 768px) {
+    .social-wall-pagination .pagination-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .social-wall-pagination .page-numbers {
+        order: 2;
+    }
+    
+    .social-wall-pagination .pagination-arrow {
+        order: 1;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .social-wall-pagination .pagination-arrow.prev {
+        order: 1;
+    }
+    
+    .social-wall-pagination .pagination-arrow.next {
+        order: 3;
+    }
+    
+    .post-image-container {
+        height: 150px;
+    }
+}
+
+/* =================================== */
+/*   FOOD CHALLENGE DETAIL IMAGES     */
+/* =================================== */
+
+.post-image-container {
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    float: right;
+    margin-left: 1rem;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-image:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive adjustments for challenge detail images */
+@media (max-width: 768px) {
+    .post-image-container {
+        width: 150px;
+        height: 120px;
+        float: right;
+        margin-left: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .post-image-container {
+        width: 120px;
+        height: 100px;
+        float: right;
+        margin-left: 0.5rem;
+    }
+}
+
+.live-dot {
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* Completion Badge Styling */
+.completed-badge {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.completed-badge i {
+    font-size: 0.9rem;
+}
+
+/* Badge with trophy spacing */
+.badge i.fas.fa-trophy {
+    margin-right: 0.4rem;
+}

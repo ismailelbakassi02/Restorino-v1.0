@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}Support Women & Cooperatives - Restorino{% endblock %}
+
+{% block styles %}
+<style>
+.donation-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3rem 0 2rem 0;
+    background: linear-gradient(90deg, #fff7f0 0%, #ffe5e0 100%);
+    border-radius: 18px;
+    margin-bottom: 2rem;
+    flex-direction: row;
+}
+.donation-hero-text {
+    flex: 1;
+    padding-right: 2rem;
+    padding-left: 3rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+.donation-hero-text h1 {
+    text-align: left;
+    margin-bottom: 1.2rem;
+}
+.donation-hero-text p {
+    text-align: left;
+    margin-bottom: 1.2rem;
+}
+.donation-hero-text .btn-donate {
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+.donation-hero-img {
+    flex: 1;
+    text-align: right;
+}
+.donation-hero-img img {
+    max-width: 350px;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(211,35,35,0.10);
+}
+.donation-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    gap: 2rem;
+}
+.donation-section.reverse {
+    flex-direction: row-reverse;
+}
+.donation-section-img {
+    flex: 1;
+    text-align: center;
+}
+.donation-section-img img {
+    max-width: 380px;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(211,35,35,0.13);
+    transition: max-width 0.3s, box-shadow 0.3s;
+}
+.donation-section-text {
+    flex: 1.2;
+}
+.donation-cta {
+    text-align: center;
+    margin: 3rem 0 2rem 0;
+}
+.donation-cta .btn-donate {
+    background: linear-gradient(90deg, #e74c3c 0%, #d32323 100%);
+    color: #fff;
+    font-size: 1.3rem;
+    padding: 1rem 2.5rem;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgba(211,35,35,0.12);
+    border: none;
+    transition: background 0.2s;
+}
+.donation-cta .btn-donate:hover {
+    background: linear-gradient(90deg, #d32323 0%, #b91c1c 100%);
+    color: #fff;
+    transform: translateY(-2px);
+}
+@media (max-width: 900px) {
+    .donation-hero, .donation-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    .donation-hero-text, .donation-section-text {
+        padding: 0;
+    }
+    .donation-hero-img, .donation-section-img {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+}
+.donation-section.donation-bg-1 {
+    background: linear-gradient(90deg, #fff7f0 0%, #f7e9e3 80%, #e3f0f7 100%);
+    border-radius: 60px 60px 120px 120px / 40px 40px 80px 80px;
+    margin-bottom: -2.5rem;
+    z-index: 2;
+    position: relative;
+}
+.donation-section.donation-bg-2 {
+    background: linear-gradient(90deg, #e3f0f7 0%, #f7f0ff 100%);
+    border-radius: 120px 120px 60px 60px / 80px 80px 40px 40px;
+    margin-bottom: -2.5rem;
+    z-index: 1;
+    position: relative;
+}
+.donation-section.donation-bg-3 {
+    background: linear-gradient(90deg, #f7f0ff 0%, #ece3f7 100%);
+    border-radius: 60px;
+    position: relative;
+    z-index: 0;
+}
+.btn-donate-animated {
+    position: relative;
+    overflow: hidden;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.7rem 0.7rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    background: linear-gradient(100deg, #ff7e5f 0%, #feb47b 50%, #d32323 100%);
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(211,35,35,0.18), 0 1.5px 0 #fff3;
+    border: none;
+    transition: background 0.22s, transform 0.15s, box-shadow 0.22s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+    z-index: 1;
+}
+.btn-donate-animated .donate-motif {
+    display: inline-block;
+    width: 1.7em;
+    height: 1.7em;
+    margin-right: 0.3em;
+    vertical-align: middle;
+    background: linear-gradient(120deg, #fff7f0 40%, #ffe5e0 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(211,35,35,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-donate-animated .donate-motif svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: #d32323;
+}
+.btn-donate-animated::after {
+    content: '';
+    position: absolute;
+    left: -60%;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.01) 100%);
+    transform: skewX(-25deg);
+    transition: left 0.5s;
+    pointer-events: none;
+}
+.btn-donate-animated:hover {
+    background: linear-gradient(100deg, #d32323 0%, #ff7e5f 100%);
+    color: #fff;
+    transform: translateY(-3px) scale(1.045);
+    box-shadow: 0 12px 32px rgba(211,35,35,0.22);
+}
+.btn-donate-animated:hover::after {
+    left: 110%;
+    transition: left 0.5s;
+}
+/* Unified card style for hero and info sections */
+.donation-card {
+    width: 100%;
+    max-width: 950px;
+    margin: 0 auto 2.2rem auto;
+    background: linear-gradient(120deg, #fff7f0 0%, #ffe5e0 100%);
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(211,35,35,0.08);
+    padding: 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    min-height: 320px;
+}
+.donation-card.reverse {
+    flex-direction: row-reverse;
+    background: linear-gradient(120deg, #e3f0f7 0%, #f7f0ff 100%);
+}
+.donation-card:nth-of-type(3) {
+    background: linear-gradient(120deg, #f7f0ff 0%, #ece3f7 100%);
+}
+.donation-card:nth-of-type(4) {
+    background: linear-gradient(120deg, #f9f7e0 0%, #e0f7f1 100%);
+}
+.donation-card-img img {
+    max-width: 340px;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(211,35,35,0.13);
+}
+.donation-card-text {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.7rem;
+}
+.donation-card-text h1, .donation-card-text h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #d32323;
+}
+.donation-card-text p {
+    font-size: 1.15rem;
+    color: #3a2c1a;
+    font-weight: 500;
+}
+@media (max-width: 900px) {
+    .donation-card {
+        flex-direction: column !important;
+        text-align: center;
+        padding: 2rem 0.5rem;
+    }
+    .donation-card-text {
+        align-items: center;
+    }
+    .donation-card-img {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+}
+/* Medium, stylish Donate button for CTA section */
+.btn-donate-cta {
+    font-size: 1.13rem;
+    padding: 0.75rem 2.1rem 0.75rem 1.3rem;
+    border-radius: 28px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    background: linear-gradient(100deg, #ff7e5f 0%, #feb47b 60%, #d32323 100%);
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(211,35,35,0.13);
+    border: none;
+    transition: background 0.18s, transform 0.13s, box-shadow 0.18s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+}
+.btn-donate-cta i {
+    color: #fff;
+    font-size: 1.1em;
+    margin-right: 0.4em;
+}
+.btn-donate-cta:hover {
+    background: linear-gradient(100deg, #d32323 0%, #ff7e5f 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 6px 18px rgba(211,35,35,0.18);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="donation-card">
+        <div class="donation-card-text">
+            <h1>Support Morocco's Hidden Culinary Gems</h1>
+            <p>Your donation helps empower talented Moroccan women cooks and local cooperatives who preserve our culinary heritage but lack the means to open their own restaurants. Join us in making a difference—one meal, one dream at a time.</p>
+            <a href="#donate" class="btn btn-donate btn-donate-animated" style="margin-top:1.2rem;">
+                <span class="donate-motif">
+                    <!-- Moroccan-inspired heart/star SVG motif -->
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+                Donate Now
+            </a>
+        </div>
+        <div class="donation-card-img">
+            <img src="static/img/morrocan-tagine.png" alt="Moroccan cook">
+        </div>
+    </div>
+
+    <!-- Section 1: Women Cooks -->
+    <div class="donation-card">
+        <div class="donation-card-img">
+            <img src="static/img/women-cook.jpg" alt="Moroccan woman cook">
+        </div>
+        <div class="donation-card-text">
+            <h2>Empowering Women Cooks</h2>
+            <p>Many gifted Moroccan women have recipes and skills passed down through generations, but lack the resources to open a restaurant or reach a wider audience. Your support helps them access training, equipment, and opportunities to share their cuisine with the world.</p>
+        </div>
+    </div>
+
+    <!-- Section 2: Cooperatives -->
+    <div class="donation-card reverse">
+        <div class="donation-card-img">
+            <img src="static/img/cooperative.png" alt="Moroccan cooperative">
+        </div>
+        <div class="donation-card-text">
+            <h2>Supporting Cooperatives</h2>
+            <p>Cooperatives are the heart of many Moroccan communities. They bring women together to produce traditional foods, crafts, and more. Donations help these cooperatives grow, sustain families, and keep Moroccan traditions alive.</p>
+        </div>
+    </div>
+
+    <!-- Section 3: Real Stories -->
+    <div class="donation-card">
+        <div class="donation-card-img">
+            <img src="static/img/rfissa.jpg" alt="Moroccan food story">
+        </div>
+        <div class="donation-card-text">
+            <h2>Real Stories, Real Impact</h2>
+            <p>Meet Fatima, Aicha, and many others whose lives have changed thanks to your generosity. Every donation helps turn a dream into reality—whether it's buying a new oven, funding a food stall, or supporting a cooperative's next project.</p>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="donation-cta" id="donate" style="background: linear-gradient(90deg, #fff7f0 0%, #ffe5e0 100%); border-radius: 18px; box-shadow: 0 2px 12px rgba(211,35,35,0.08); padding: 2.5rem 1rem;">
+        <h2 class="mb-3" style="font-weight: 800; color: #d32323; letter-spacing: 1px;">Ready to Make a Difference?</h2>
+        <p class="mb-4" style="font-size: 1.15rem; font-weight: 500;">Your contribution—big or small—directly supports Moroccan women cooks and cooperatives.<br>Thank you for helping us preserve and celebrate Morocco's culinary heritage!</p>
+        <div style="height: 1.5rem;"></div>
+        <a href="#" class="btn btn-donate-cta">
+            <i class="fas fa-heart"></i> Donate Now
+        </a>
+        <div style="height: 1.5rem;"></div>
+        <div class="text-muted" style="font-size: 1rem; margin-top: 1.5rem;">(Donation processing coming soon. For now, contact us to get involved!)</div>
+    </div>
+</div>
+{% endblock %} 

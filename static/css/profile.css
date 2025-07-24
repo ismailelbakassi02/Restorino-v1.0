@@ -1,0 +1,525 @@
+/* Profile and User Interface Styles */
+
+/* Profile Picture Styles */
+.profile-pic-small {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px;
+}
+
+/* Dropdown Menu Styles */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.dropdown-toggle i.fa-caret-down {
+    margin-left: 5px;
+    transition: transform 0.2s;
+}
+
+.dropdown:hover .dropdown-toggle i.fa-caret-down {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    padding: 0.5rem 0;
+    z-index: 100;
+    display: none;
+    overflow: hidden;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    display: block;
+    width: 100%;
+}
+
+.dropdown-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    transition: background-color 0.2s;
+}
+
+.dropdown-menu li a:hover {
+    background-color: var(--off-white);
+}
+
+.dropdown-menu li a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Profile Settings Styles */
+.profile-settings-container {
+    padding: 3rem 0;
+    background-color: transparent;
+}
+
+:root {
+    --profile-red-primary: #d32323;
+    --profile-red-secondary: #b91c1c;
+    --profile-red-light: #e74c3c;
+    --profile-red-shadow: rgba(211, 35, 35, 0.4);
+    --profile-red-shadow-hover: rgba(211, 35, 35, 0.5);
+    --profile-red-focus: rgba(211, 35, 35, 0.25);
+}
+
+/* This is the red frame from the image */
+.profile-settings-frame {
+    background: var(--profile-red-primary);
+    padding: 2.5rem;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+/* This is the title inside the orange frame */
+.profile-settings-main-title {
+    color: white;
+    font-weight: bold;
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* This is the white card inside the orange frame */
+.profile-settings-card-inner {
+    background: white;
+    border-radius: 15px;
+    padding: 3rem;
+}
+
+/* Profile Header: Image on left, info on right */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-image-section {
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.profile-info-section {
+    flex-grow: 1;
+}
+
+/* Profile Image Styling */
+.profile-image-container {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+    cursor: pointer;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.profile-image-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-color: var(--profile-red-primary);
+}
+
+.profile-image-container:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--profile-red-focus), 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.profile-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.profile-image-container:hover .profile-image {
+    transform: scale(1.1);
+}
+
+/* Profile Image Overlay */
+.profile-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(211, 35, 35, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+}
+
+.profile-image-container:hover .profile-image-overlay {
+    opacity: 1;
+}
+
+.profile-image-overlay i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.overlay-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Profile Image Loading State */
+.profile-image-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--profile-red-primary);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.profile-image-loading i {
+    font-size: 2rem;
+}
+
+/* Profile Image Info */
+.profile-image-info {
+    margin-top: 0.5rem;
+}
+
+.profile-image-label {
+    cursor: pointer;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.profile-image-label:hover {
+    color: var(--profile-red-primary);
+}
+
+.hidden-file-input {
+    display: none;
+}
+
+/* Enhanced Placeholder Styling */
+.profile-pic-placeholder-large {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e9ecef, #f8f9fa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 3rem;
+    border: 3px solid #dee2e6;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.profile-image-container:hover .profile-pic-placeholder-large {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-color: var(--profile-red-primary);
+    color: var(--profile-red-primary);
+    transform: scale(1.05);
+}
+
+/* Profile Image Container States */
+.profile-image-container.has-image {
+    border-color: #fff;
+}
+
+.profile-image-container.has-image:hover {
+    border-color: var(--profile-red-primary);
+}
+
+.profile-image-container.no-image {
+    border-color: #dee2e6;
+}
+
+.profile-image-container.no-image:hover {
+    border-color: var(--profile-red-primary);
+}
+
+/* Animation for image preview */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.profile-image {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+.profile-image-container:focus-visible {
+    outline: 2px solid var(--profile-red-primary);
+    outline-offset: 2px;
+}
+
+/* Form Styling */
+.form-label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: var(--profile-red-primary);
+    box-shadow: 0 0 0 3px var(--profile-red-focus);
+}
+
+/* Section Title for "Change Password" */
+.section-title {
+    color: var(--profile-red-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 2.5rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--profile-red-primary);
+    display: inline-block;
+}
+
+/* Submit Button */
+.submit-button-container {
+    margin-top: 2.5rem;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--profile-red-primary), var(--profile-red-secondary));
+    border: none;
+    color: white;
+    padding: 0.9rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--profile-red-shadow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--profile-red-shadow-hover);
+}
+
+/* Review Images Styles */
+.review-images {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.review-image {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.review-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.review-image:hover img {
+    transform: scale(1.1);
+}
+
+.review-image-gallery {
+    margin-top: 1rem;
+}
+
+.review-image-gallery-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Image Upload Preview */
+.image-preview-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.image-preview {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #e6e6e6;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview .remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.image-preview .remove-image:hover {
+    background: rgba(220, 53, 69, 1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        border: 1px solid #e6e6e6;
+        margin-top: 0.5rem;
+    }
+    
+    .profile-pic-small {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .profile-settings-frame {
+        padding: 1.5rem;
+    }
+    .profile-settings-card-inner {
+        padding: 2rem;
+    }
+    .profile-settings-main-title {
+        font-size: 2.2rem;
+    }
+    .profile-image-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .profile-pic-placeholder-large {
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
+    }
+    
+    .profile-image-overlay i {
+        font-size: 1.2rem;
+    }
+    
+    .overlay-text {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-settings-container {
+        padding: 1rem 0;
+    }
+    
+    .profile-settings-container .container {
+        min-height: calc(100vh - 2rem);
+        padding: 0 0.5rem;
+    }
+    
+    .profile-settings-card {
+        max-width: 98%;
+    }
+    
+    .profile-settings-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .profile-settings-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .profile-settings-header h2 {
+        font-size: 2rem;
+    }
+    
+    .btn-primary {
+        padding: 14px 24px;
+        font-size: 1.2rem;
+    }
+}
